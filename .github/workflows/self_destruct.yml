@@ -1,0 +1,37 @@
+name: 7-Day Self Destruct
+
+on:
+  schedule:
+    # 2026년 8월 27일 05시 51분 (UTC) -> 한국 시간 2026년 8월 27일 14시 51분
+    - cron: '51 5 27 8 *'
+  workflow_dispatch:
+
+jobs:
+  delete-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Self-Destruct
+        env:
+          PAT_TOKEN: ${{ secrets.DELETE_PAT }}
+        run: |
+          if [ -z "$PAT_TOKEN" ]; then
+            echo "Error: DELETE_PAT secret is missing."
+            exit 1
+          fi
+          
+          echo "Initiating self-destruct sequence for repository: ${{ github.repository }}..."
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token $PAT_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }})
+            
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+          
+          if [ "$HTTP_STATUS" -eq 204 ]; then
+            echo "Self-destruct complete. Repository deleted successfully."
+          else
+            echo "Failed to delete repository. HTTP Status: $HTTP_STATUS"
+            echo "Response: $RESPONSE"
+            exit 1
+          fi
