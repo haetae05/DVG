@@ -10,7 +10,7 @@
 대상 서버(Ubuntu/Debian 권장)에 다음 패키지가 설치되어 있어야 합니다. (컴파일러는 필요 없습니다.)
 ```bash
 sudo apt-get update
-sudo apt-get install -y qemu-system-x86 qemu-utils ovmf nftables inotify-tools
+sudo apt-get install -y qemu-system-x86 qemu-utils ovmf nftables inotify-tools socat
 ```
 
 ### 필수 커널 모듈 활성화
