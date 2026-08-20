@@ -70,3 +70,13 @@ ls -la /usr/share/OVMF/OVMF_CODE.fd
 cd bin
 sudo ./kraftlet
 ```
+
+### Step 4. Egress Trap 모의 테스트 (Red Team)
+현재 데모 버전의 바이너리는 Egress 기만 작동 테스트를 위해 다음 두 가지 시그니처 해시가 하드코딩되어 있습니다.
+- `DATABASE`
+- `SECRET_K`
+
+네트워크를 통해 외부(해커)에서 해당 문자열이 포함된 데이터를 탈취하려 시도해 보십시오. (예: `curl -d "DATABASE" http://<타겟_IP>`)
+1. 알람이나 경고 로그 없이 **즉각적으로 해당 페이로드가 쓰레기값으로 파쇄(Branchless SWAR)**되어 반환되는 것을 확인할 수 있습니다.
+2. 탈취 시도와 동시에 `10ms_format_trigger.sh`가 작동하여 타겟 가상머신(QCOW2)을 10밀리초 내에 전면 초기화 상태(pristine)로 롤백시킵니다.
+※ 상용화 시, 별도 파싱 모듈을 추가하여 부트 파라미터로 동적 시그니처 등록이 가능하도록 설계되어 있습니다.
